@@ -1,134 +1,42 @@
-# 📄 md2web
+# md2web
 
-> A minimal, elegant Markdown document viewer — just write in `doc.md`, open `index.html`, and you're done.
+> AI生成。本项目用于帮助我学习html。和部署个人网站。已经弃用。
 
-This project turns your Markdown file into a beautifully styled web page. No build step, no terminal commands — just a static HTML file powered by [Showdown.js](https://github.com/showdownjs/showdown).
 
-## ✨ Features
+## 工作方式
 
-| Feature | Description |
-| --- | --- |
-| 📝 Real‑time rendering | `index.html` reads `doc.md` and converts it on the fly |
-| 🎨 Beautiful defaults | Clean typography and readable layout out of the box |
-| 🪶 Zero build step | No npm, no bundler — runs directly in the browser |
-| 📱 Responsive | Looks good on desktop, tablet, and mobile |
-| 🌐 Offline-ready | Can be configured to work without an internet connection |
+- `index.html` 通过 Fetch API 读取 `doc.md`
+- [Showdown.js](https://github.com/showdownjs/showdown) 将 Markdown 转为 HTML
+- 附带 CSS
 
-## 🚀 Quick Start
+## 使用
 
-1. **Clone or download** this repository
-2. **Edit** `doc.md` — write your content in Markdown
-3. **Open** `index.html` in any modern browser
+将`doc.md`和`index.html`放在同一目录
 
-That's it. Every time you refresh the page, it pulls the latest content from `doc.md`.
+`index.html` 在启动时会fetch `doc.md` 然后转换为html
 
-## 🗂️ Project Structure
+本地环境可能会收到浏览器安全功能影响
 
-```
-.
-├── index.html      # Main viewer (uses Showdown.js via CDN)
-├── doc.md          # Your content — edit this
-└── README.md       # This file
-```
+## Showdown.js
 
-## 🛠️ How It Works
-
-- `index.html` fetches `doc.md` using the Fetch API
-- [Showdown.js](https://github.com/showdownjs/showdown) converts Markdown → HTML
-- A minimal CSS stylesheet makes the result pleasant to read
-
-## 📝 Example
-
-Write this in `doc.md`:
-
-```markdown
-# Hello, World
-
-This is **bold** and this is *italic*.
-```
-
-…and `index.html` will display a properly formatted heading and paragraph.
-
-## 📦 About Showdown.js
-
-By default, `index.html` loads Showdown.js from a CDN:
+默认从 CDN 加载：
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
 ```
 
-This works out of the box with no extra steps.
+离线使用：从 https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js 下载 `showdown.min.js` 到 `index.html` 同目录，并将 script 的 `src` 改为 `showdown.min.js`。
 
-### 🔧 Switching to a Local Copy (Offline Use)
+## 致谢
 
-If you want to use this project without an internet connection, you can download Showdown.js locally:
-
-#### Step 1: Download the file
-
-**Option A — Using curl (Linux/macOS/Git Bash):**
-```bash
-curl -O https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js
-```
-
-**Option B — Using wget:**
-```bash
-wget https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js
-```
-
-**Option C — Manual download:**
-Open this link in your browser and save the file:
-https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js
-
-#### Step 2: Place the file
-
-Put `showdown.min.js` in the **same folder** as `index.html`.
-
-#### Step 3: Update `index.html`
-
-Change the script tag from:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
-```
-
-to:
-
-```html
-<script src="showdown.min.js"></script>
-```
-
-That's it! Now you can open `index.html` without an internet connection.
-
-### 📂 Local Setup Project Structure
-
-After switching to local Showdown.js:
-
-```
-.
-├── index.html
-├── doc.md
-├── showdown.min.js   # <-- downloaded locally
-└── README.md
-```
-
-## 🙏 Acknowledgments
-
-This project uses [Showdown.js](https://github.com/showdownjs/showdown) by ShowdownJS.  
-Showdown is released under the MIT License:
+本项目使用 [Showdown.js](https://github.com/showdownjs/showdown)，基于 MIT License：
 
 > MIT License  
 > Copyright (c) 2018,2021 ShowdownJS  
 > https://github.com/showdownjs/showdown
 
-Special thanks to the ShowdownJS team for creating such a robust and easy‑to‑use Markdown converter.
+## 许可证
 
-## 📄 License
+本项目自有代码采用 [Unlicense](https://unlicense.org/)，可自由使用、复制、修改、分发和销售。
 
-**My own code** in this project is dedicated to the public domain under the [Unlicense](https://unlicense.org/).  
-You may use, copy, modify, distribute, and sell it for any purpose, without restriction.
-
-*Showdown.js remains under its original MIT License as noted in the Acknowledgments section above.*
-
----
-
-⭐️ Star this repo if you find it useful.
+Showdown.js 遵循其原始 MIT License。
