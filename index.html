@@ -1,42 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- 文档类型声明：告知浏览器使用标准HTML5模式渲染页面，避免触发怪异模式 -->
+<html lang="zh-CN">
+<!-- 根元素，语言属性设为简体中文，有助于搜索引擎和屏幕阅读器识别页面主要语言 -->
 <head>
+    <!-- 字符集声明：使用UTF-8编码，支持包括中文在内的几乎所有Unicode字符，避免乱码 -->
     <meta charset="UTF-8">
+    <!-- 视口配置：控制移动端布局行为
+         width=device-width → 视口宽度等于设备屏幕宽度
+         initial-scale=1.0 → 初始缩放比例为1（不缩放）
+         viewport-fit=cover → 允许内容填充刘海屏等异形区域（iOS专用，使页面全屏展示）
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>md2web · Title</title>
-    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+    <!-- 浏览器标签页显示的标题，也是个人站品牌标识 -->
+    <title>Kalin-moe · 个人站</title>
+    <!-- 引入 Showdown 库（CDN 方式）：
+         Showdown 是一个流行的 JavaScript Markdown 转 HTML 转换器
+         使用压缩版（.min.js）以减小体积、提升加载速度
+         该库暴露全局变量 'showdown'，供后续脚本使用
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
     <style>
+        /* ---------- 全局重置与盒模型 ---------- */
+        /* 通配选择器：重置所有元素的边距和内边距，并统一使用 border-box 盒模型
+           border-box 使得 width/height 包含 padding 和 border，避免布局计算混乱 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* 页面主体样式：定义全局字体、背景、行高、默认文本色及内边距 */
         body {
+            /* 系统级无衬线字体栈：优先使用系统UI字体，保证不同平台一致性，
+               -apple-system 针对 macOS/iOS，Segoe UI 针对 Windows，Roboto 针对 Android */
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            line-height: 1.65;
-            font-size: 1rem;
-            color: #111;
-            background: #faf9f8;
-            padding: 1.5rem 1rem;
+            line-height: 1.65;          /* 适中行高，提升长文阅读舒适度 */
+            font-size: 1rem;            /* 基础字体大小，默认16px（相对单位） */
+            color: #111;                /* 深灰色文字，接近黑色但稍柔和不刺眼 */
+            background: #fff;           /* 纯白背景，极简风格，突出内容 */
+            padding: 1.5rem 1rem;       /* 上下1.5rem，左右1rem，确保移动设备内容不贴边 */
         }
 
+        /* Markdown 内容容器：模拟 GitHub 风格 markdown 阅读体验 */
         .markdown-body {
-            max-width: 400px;
-            margin: 0 auto;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
-            padding: 1.2rem 1.2rem 2rem 1.2rem;
+            max-width: 400px;           /* 手机视口下最大宽度较小，阅读舒适（适中宽度） */
+            margin: 0 auto;             /* 水平居中，使内容在大屏幕上也不靠左靠右 */
+            width: 100%;                /* 宽度自适应父容器，但受 max-width 限制 */
         }
 
+        /* 强制所有后代元素遵循单词换行：防止长URL或长字符串破坏布局（尤其是移动端） */
         .markdown-body,
         .markdown-body * {
-            word-break: break-word;
-            overflow-wrap: break-word;
+            word-break: break-word;     /* 在单词边界内换行，防止溢出 */
+            overflow-wrap: break-word;  /* 兼容性更强的换行属性，同上 */
         }
 
+        /* 为常见Markdown块级元素设定统一的底部外边距，保持垂直节奏 */
         .markdown-body h1,
         .markdown-body h2,
         .markdown-body h3,
@@ -45,31 +64,26 @@
         .markdown-body ol,
         .markdown-body blockquote,
         .markdown-body pre,
-        .markdown-body table,
-        .markdown-body hr {
-            margin-bottom: 1.25rem;
+        .markdown-body table {
+            margin-bottom: 1.25rem;     /* 约20px，段落间间距舒适 */
         }
 
+        /* 标题字号及样式个性化 */
         .markdown-body h1 {
-            font-size: 2rem;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-            font-weight: 700;
-            margin-top: 0.2rem;
+            font-size: 2rem;            /* 32px，突出主标题 */
+            line-height: 1.2;           /* 紧凑但不拥挤 */
         }
         .markdown-body h2 {
-            font-size: 1.5rem;
+            font-size: 1.5rem;          /* 24px */
+            /* 下边框分隔线，类似 GitHub 风格，增加层次感 */
             border-bottom: 1px solid #eaecef;
-            padding-bottom: 0.4rem;
-            margin-top: 1.8rem;
-            font-weight: 600;
+            padding-bottom: 0.3rem;
         }
         .markdown-body h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-top: 1.4rem;
+            font-size: 1.25rem;         /* 20px */
         }
 
+        /* 超链接样式：GitHub 风格蓝色，移除下划线，鼠标悬停时出现下划线提升交互提示 */
         .markdown-body a {
             color: #0366d6;
             text-decoration: none;
@@ -78,166 +92,199 @@
             text-decoration: underline;
         }
 
+        /* 代码块样式（<pre> 内嵌 <code> 的情况）：
+           背景浅灰，圆角，内边距，横向滚动避免过长代码折行 */
         .markdown-body pre {
-            background: #f6f8fa;
-            border-radius: 12px;
-            padding: 1rem;
-            overflow-x: auto;
-            font-size: 0.85rem;
-            line-height: 1.45;
-            border: 1px solid #eef2f5;
-        }
-        .markdown-body code {
-            background: #f0f0f0;
-            padding: 0.2rem 0.4rem;
+            background: #f6f8fa;        /* GitHub 浅灰背景色 */
             border-radius: 8px;
-            font-family: 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
-            font-size: 0.85em;
+            padding: 1rem;
+            overflow-x: auto;           /* 代码超宽时出现横向滚动条，保留格式完整性 */
+            font-size: 0.9rem;
+            line-height: 1.45;
         }
+        /* 行内代码样式（如 `code` 内联） */
+        .markdown-body code {
+            background: #f0f0f0;        /* 浅灰色背景突出代码片段 */
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            /* 等宽字体优先，提高代码可读性 */
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+            font-size: 0.9em;           /* 相对父级字号稍小，保持视觉平衡 */
+        }
+        /* 代码块内的 code 不需要额外的背景和内边距，因为 pre 已经提供背景 */
         .markdown-body pre code {
             background: transparent;
             padding: 0;
+            font-size: inherit;
         }
 
+        /* 图片样式：响应式宽度，居中显示，增加圆角及阴影可选，这里仅圆角提升质感 */
         .markdown-body img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 1.8rem auto;
-            border-radius: 16px;
+            max-width: 100%;            /* 确保图片不超出容器宽度 */
+            height: auto;               /* 维持原始宽高比 */
+            display: block;             /* 块级元素配合 margin auto 实现居中 */
+            margin: 1.5rem auto;
+            border-radius: 12px;
         }
 
+        /* 表格：允许横向滚动，在窄屏上可以滑动查看完整表格 */
         .markdown-body table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-            border-collapse: collapse;
+            display: block;             /* 使表格成为块级，从而支持 overflow-x */
+            overflow-x: auto;           /* 宽表格可滑动 */
+            white-space: nowrap;        /* 单元格内容不自动换行，保持表格整齐（便于滑动时阅读） */
+            border-collapse: collapse;  /* 合并表格边框 */
             width: 100%;
-            margin-bottom: 1.25rem;
         }
         .markdown-body th,
         .markdown-body td {
-            border: 1px solid #e2e8f0;
-            padding: 0.6rem 0.8rem;
-            text-align: left;
-        }
-        .markdown-body th {
-            background-color: #f8fafc;
-            font-weight: 600;
+            border: 1px solid #ddd;     /* 浅灰色边框 */
+            padding: 0.5rem;
         }
 
+        /* 列表左内边距，保持缩进统一 */
         .markdown-body ul, .markdown-body ol {
             padding-left: 1.75rem;
-            margin-bottom: 1.25rem;
-        }
-        .markdown-body li {
-            margin: 0.3rem 0;
         }
 
+        /* 引用块样式：左侧竖线，浅灰文字，无外边距偏移，营造引用氛围 */
         .markdown-body blockquote {
-            border-left: 4px solid #cbd5e1;
-            padding-left: 1.2rem;
-            color: #334155;
+            border-left: 4px solid #dfe2e5;
+            padding-left: 1rem;
+            color: #6a737d;
             margin-left: 0;
-            background: #fefefe;
-            border-radius: 0 12px 12px 0;
         }
 
-        .markdown-body hr {
-            border: none;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #ddd, transparent);
-            margin: 1.8rem 0;
-        }
-
+        /* 加载提示消息：居中、灰色，占位提示用户文档正在加载 */
         .loading-msg {
             text-align: center;
-            color: #6c757d;
-            padding: 3rem 1rem;
-            background: #fef9e6;
-            border-radius: 28px;
+            color: #666;
+            padding: 2rem;
         }
 
-        .markdown-body input[type="checkbox"] {
-            margin-right: 0.5rem;
-            transform: translateY(2px);
-            pointer-events: none;
-        }
-        .markdown-body .task-list-item {
-            list-style-type: none;
-            margin-left: -1.2rem;
+        /* 额外处理 <br> 标签的间距，增强换行控制（某些Markdown编辑器可能生成多<br>） */
+        .markdown-body br {
+            display: block;
+            margin: 0.2rem 0;
+            content: "";
         }
 
+        /* ---------- 响应式设计：中等屏幕（平板/桌面）提升宽度 ---------- */
         @media (min-width: 768px) {
             body {
-                padding: 2.5rem 2rem;
+                padding: 2.5rem 2rem;   /* 增加四周留白，更大气 */
             }
             .markdown-body {
-                max-width: 780px;
-                padding: 2rem 2.2rem 2.5rem 2.2rem;
+                max-width: 780px;       /* 增加内容宽度，阅读效率更高 */
             }
         }
 
+        /* 大屏幕（宽屏笔记本/显示器）进一步加宽内容区域 */
         @media (min-width: 1200px) {
             .markdown-body {
                 max-width: 1000px;
-                padding: 2.2rem 2.8rem 3rem 2.8rem;
+            }
+            body {
+                padding: 3rem 2.5rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- 页面主体内容容器，类名为 markdown-body，用于承载转换后的 HTML 结构。
+         初始时显示加载中提示，待 JS 动态替换为 Markdown 转换后的富文本 -->
     <div class="markdown-body" id="markdown-content">
-        <div class="loading-msg">
-            🌙 loading...
-        </div>
+        <div class="loading-msg">🐾 正在加载内容...</div>
     </div>
 
     <script>
+        // 使用立即执行函数 (IIFE) 避免全局变量污染，且保证代码在 DOM 就绪后执行（放在 body 底部已保证 DOM 存在）
         (function() {
+            // 第一步：检测 Showdown 库是否成功加载（因为 CDN 可能被阻断或网络失败）
+            // 如果全局对象 showdown 未定义，则友好提示错误并阻止后续操作，避免页面崩溃
             if (typeof showdown === 'undefined') {
-                document.getElementById('markdown-content').innerHTML =
-                    '<div style="color: #b91c1c; padding: 1.5rem;">❌ Showdown err</div>';
-                return;
+                // 获取放置内容的容器元素
+                const contentContainer = document.getElementById('markdown-content');
+                if (contentContainer) {
+                    // 使用红色错误样式提示用户，并且说明库加载失败，便于调试/反馈
+                    contentContainer.innerHTML =
+                        '<p style="color: red;">❌ Showdown 库加载失败</p>';
+                }
+                return;  // 终止执行，不再尝试 fetch markdown 文件
             }
 
+            // 创建 Showdown 转换器实例。Converter 提供 Markdown 解析及 HTML 生成能力
             const converter = new showdown.Converter();
-
+            
+            // 设置转换器选项，启用常用 Markdown 扩展特性，使渲染更符合当代写作习惯
+            // breaks (true) : 将换行符（\n）转换为 <br> 标签，实现类似 GitHub 的“硬换行”
+            converter.setOption('breaks', true);
+            // tables (true) : 支持 Markdown 表格语法（如 | 单元格 | ）
             converter.setOption('tables', true);
+            // simplifiedAutoLink (true) : 自动识别纯 URL 并转换为可点击超链接
             converter.setOption('simplifiedAutoLink', true);
+            // strikethrough (true) : 支持 ~~删除线~~ 语法
             converter.setOption('strikethrough', true);
+            // tasklists (true) : 支持 GFM 任务列表语法（如 - [x] 已完成任务）
             converter.setOption('tasklists', true);
+            // emoji (true) : 支持常见 Emoji 短码如 :smile: 转换为对应表情符号（有限支持）
             converter.setOption('emoji', true);
+            // openLinksInNewWindow (true) : 将 markdown 链接的 target 设为 _blank，在新标签页打开，提升外部链接体验
             converter.setOption('openLinksInNewWindow', true);
-            converter.setOption('ghCompatibleHeaderId', true);
-            converter.setOption('parseImgDimensions', true);
-
+            
+            // 准备发起网络请求，获取同目录下的 doc.md 文件
+            // 注意：这里使用 fetch API 是异步的，基于 Promise 处理成功/失败
             fetch('doc.md')
                 .then(response => {
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    // 检查 HTTP 响应状态是否成功（状态码 200-299）
+                    if (!response.ok) {
+                        // 如果请求失败（如 404 找不到文件、500 服务器错误等），抛出错误并携带状态码
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    // 成功获取后，将响应体解析为纯文本字符串（Markdown 源码）
                     return response.text();
                 })
                 .then(markdownText => {
+                    // 将 Markdown 文本通过 converter 转换为 HTML 字符串
                     const html = converter.makeHtml(markdownText);
-                    document.getElementById('markdown-content').innerHTML = html;
+                    // 获取内容容器元素，并将转换后的 HTML 插入其中，替换原有的加载提示信息
+                    const contentDiv = document.getElementById('markdown-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = html;
+                    }
                 })
                 .catch(error => {
-                    console.error('Load failed:', error);
-                    document.getElementById('markdown-content').innerHTML = `
-                        <div style="background: #fff5f0; border-radius: 28px; padding: 1.8rem; text-align: center;">
-                            <div style="font-size: 2.5rem;">📄</div>
-                            <h3 style="color: #b45309;">doc.md not found</h3>
-                            <p style="margin-top: 1rem; font-size:0.9rem;">
-                                Create a <strong>doc.md</strong> file in the root directory<br><br>
-                                <span style="background: #f0e4d8; padding: 0.3rem 0.8rem; border-radius: 8px; display: inline-block;">
-                                💡 Line break tip: two spaces at end of line + Enter = line break<br>
-                                Blank line = new paragraph
-                                </span>
-                            </p>
-                        </div>
-                    `;
+                    // 捕获任何阶段的错误：网络错误、解析错误、HTTP 状态错误等
+                    // 在控制台输出详细的错误信息，方便开发者排查（例如路径错误或权限问题）
+                    console.error('加载 doc.md 失败:', error);
+                    // 向用户展示友好的错误提示，并建议检查 doc.md 文件是否存在
+                    const contentDiv = document.getElementById('markdown-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = 
+                            '<div style="color: #b91c1c; background: #fee2e2; padding: 1rem; border-radius: 12px; text-align: center;">' +
+                            '⚠️ 无法加载内容，请确认 <code>doc.md</code> 文件存在且路径正确</div>';
+                    }
                 });
         })();
+        /* 
+          简要执行流程总结：
+          1. 页面加载后立即执行匿名函数。
+          2. 检测 showdown 全局对象，缺失则显示错误并停止。
+          3. 配置 Showdown 转换器以支持多种扩展语法（表格、自动链接、删除线等）。
+          4. 通过 fetch 请求 './doc.md' 文件。
+          5. 若响应成功，读取文本内容并转换成 HTML。
+          6. 将生成的 HTML 添加到 id="markdown-content" 容器中，替换加载占位符。
+          7. 如果请求失败或文件缺失，展示美观的错误卡片，提供解决线索。
+          这种动态加载方式方便站长直接编辑 doc.md 更新内容，无需改动 HTML 核心文件。
+        */
     </script>
+    <!-- 
+        扩展说明：
+        - 该页面设计为轻量级个人站点，所有内容通过 Markdown 维护，适合博客风格或作品展示。
+        - 样式采用类似 GitHub 的阅读风格，确保代码高亮（浅色主题）、表格/图片响应式。
+        - 在移动端优先设计，通过媒体查询优雅适配平板和桌面设备。
+        - 加载状态的占位提示提升用户体验；若 Showdown 加载失败，也能给予清晰指引。
+        - 路径 'doc.md' 默认与 HTML 文件同目录，可根据实际结构调整，但须保持相对路径正确。
+        - 此外，showdown 转换器开启了 'openLinksInNewWindow'，让外部链接在新标签打开而不离开本站。
+    -->
 </body>
 </html>
